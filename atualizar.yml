@@ -1,0 +1,57 @@
+name: Atualizar dados dos deputados
+
+on:
+  schedule:
+    - cron: "30 9 * * *"      # todo dia às 06:30 (horário de Brasília)
+  workflow_dispatch:           # permite rodar na mão pela aba Actions
+
+permissions:
+  contents: write              # para commitar deputados.json
+  issues: write                # para abrir issue se falhar
+
+concurrency:
+  group: atualizar
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Coletar dados da Câmara e calcular indicadores
+        run: python atualizar.py
+
+      - name: Publicar deputados.json
+        run: |
+          git config user.name "robo-monitor"
+          git config user.email "robo-monitor@users.noreply.github.com"
+          git add deputados.json
+          git commit -m "Dados de $(date -u +%Y-%m-%d)" || echo "sem mudanças"
+          git push
+
+      # ---- avisos se algo der errado ----
+      - name: Avisar no celular (ntfy.sh)
+        if: failure()
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          if [ -n "$NTFY_TOPIC" ]; then
+            curl -s -H "Title: Monitor de deputados falhou" -H "Priority: high" -H "Tags: warning" \
+              -d "A atualização diária falhou: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+              "https://ntfy.sh/$NTFY_TOPIC"
+          fi
+
+      - name: Abrir issue (gera e-mail do GitHub)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Falha na atualização diária ($(date -u +%Y-%m-%d))" \
+            --body "A atualização automática falhou. Veja o log: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" || true

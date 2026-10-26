@@ -1,0 +1,8 @@
+{
+  "nota": "Classificação simplificada em 3 grupos (esquerda, centro, direita), inspirada em estudos de ciência política sobre o espectro ideológico dos partidos brasileiros (ex.: Bolognesi, Ribeiro e Codato, 2023). É uma convenção sujeita a debate: edite este arquivo para ajustar. Partidos fora da lista entram como centro.",
+  "partidos": {
+    "PT": "esquerda", "PSOL": "esquerda", "PCdoB": "esquerda", "PV": "esquerda", "PSB": "esquerda", "PDT": "esquerda", "REDE": "esquerda", "PROS": "esquerda",
+    "MDB": "centro", "PSD": "centro", "PSDB": "centro", "PODE": "centro", "CIDADANIA": "centro", "SOLIDARIEDADE": "centro", "AVANTE": "centro", "PMB": "centro", "AGIR": "centro", "PMN": "centro",
+    "PL": "direita", "PP": "direita", "UNIÃO": "direita", "REPUBLICANOS": "direita", "NOVO": "direita", "PRD": "direita", "MISSÃO": "direita", "DC": "direita", "PSC": "direita", "PATRIOTA": "direita", "PTB": "direita"
+  }
+}
