@@ -35,7 +35,18 @@ jobs:
           git commit -m "Dados de $(date -u +%Y-%m-%d)" || echo "sem mudanças"
           git push
 
-      # ---- avisos se algo der errado ----
+      # ---- avisos: deu certo / deu errado ----
+      - name: Avisar no celular que deu certo (ntfy.sh)
+        if: success()
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          if [ -n "$NTFY_TOPIC" ]; then
+            curl -s -H "Title: Monitor de deputados atualizado" -H "Tags: white_check_mark" \
+              -d "Atualização diária concluída com sucesso em $(date -u +%d/%m/%Y)." \
+              "https://ntfy.sh/$NTFY_TOPIC"
+          fi
+
       - name: Avisar no celular (ntfy.sh)
         if: failure()
         env:
