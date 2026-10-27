@@ -2,7 +2,7 @@ name: Atualizar dados dos deputados
 
 on:
   schedule:
-    - cron: "30 9 * * *"      # todo dia às 06:30 (horário de Brasília)
+    - cron: "17 6 * * *"      # todo dia às 03:17 (horário de Brasília)
   workflow_dispatch:           # permite rodar na mão pela aba Actions
 
 permissions:
